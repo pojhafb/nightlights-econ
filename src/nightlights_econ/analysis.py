@@ -42,11 +42,11 @@ def shock_analysis(
 
     # Pre-event trend (slope of linear fit per month)
     pre["t"] = range(len(pre))
-    pre_slope = float(np.polyfit(pre["t"], pre[metric].fillna(method="ffill"), 1)[0]) if len(pre) >= 2 else 0.0
+    pre_slope = float(np.polyfit(pre["t"], pre[metric].ffill(), 1)[0]) if len(pre) >= 2 else 0.0
 
     # Post-event trend
     post["t"] = range(len(post))
-    post_slope = float(np.polyfit(post["t"], post[metric].fillna(method="ffill"), 1)[0]) if len(post) >= 2 else 0.0
+    post_slope = float(np.polyfit(post["t"], post[metric].ffill(), 1)[0]) if len(post) >= 2 else 0.0
 
     # Recovery: how many months after event to return to pre-event level
     recovery_months = None

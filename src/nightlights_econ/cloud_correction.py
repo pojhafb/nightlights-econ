@@ -55,6 +55,14 @@ def correct_cloud_bias(
         good_cf = cf[good_mask]
         good_rad = rad[good_mask]
 
+        if np.ptp(good_cf) == 0:
+            # All clear months have identical cf_obs — skip regression correction
+            corrected = _fallback_seasonal_correction(rad, cf, cf_threshold)
+            corrected = np.maximum(corrected, rad)
+            corrected[np.isnan(rad)] = np.nan
+            df[corrected_col] = corrected
+            return df
+
         slope, intercept, r_value, p_value, std_err = stats.linregress(good_cf, good_rad)
 
         median_cf = float(np.median(good_cf))
