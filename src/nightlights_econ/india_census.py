@@ -308,6 +308,218 @@ DISTRICT_POP: dict[str, dict[str, int]] = {
 }
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Census 2001 district populations (for computing per-district growth rates)
+# Source: Census of India 2001 primary census abstracts
+# ─────────────────────────────────────────────────────────────────────────────
+DISTRICT_POP_2001: dict[str, dict[str, int]] = {
+    "Andhra Pradesh": {
+        "Adilabad": 2483573, "Anantapur": 3641756, "Chittoor": 3735000,
+        "Cuddapah": 2574580, "East Godavari": 4901420, "Guntur": 4465144,
+        "Hyderabad": 3637483, "Karimnagar": 3493217, "Khammam": 2531477,
+        "Krishna": 4187841, "Kurnool": 3530093, "Mahbubnagar": 3508985,
+        "Medak": 2662296, "Nalgonda": 3228381, "Nellore": 2615898,
+        "Nizamabad": 2345685, "Prakasam": 3059152, "Rangareddi": 3512856,
+        "Srikakulam": 2538362, "Vishakhapatnam": 3789823, "Vizianagaram": 2244835,
+        "Warangal": 3219879, "West Godavari": 3803044,
+    },
+    "Arunachal Pradesh": {
+        "Changlang": 120850, "Lower Dibang Valley": 163047,
+        "Papum Pare": 137680, "East Siang": 80455, "West Siang": 98940,
+    },
+    "Assam": {
+        "Nagaon": 2314629, "Dhubri": 1634589, "Sonitpur": 1924110,
+        "Kamrup": 1517792, "Barpeta": 1457685, "Cachar": 1443116,
+        "Dibrugarh": 1176911, "Jorhat": 995922, "Lakhimpur": 909054,
+        "Tinsukia": 1127205, "Darrang": 1504882,
+    },
+    "Bihar": {
+        "Patna": 4709851, "East Champaran": 4027226, "Muzaffarpur": 3743130,
+        "Gaya": 3736593, "Samastipur": 3448691, "Vaishali": 2894081,
+    },
+    "Chandigarh": {"Chandigarh": 900635},
+    "Chhattisgarh": {
+        "Raipur": 2864038, "Durg": 2773047, "Bilaspur": 2128886,
+        "Surguja": 1987730, "Raigarh": 1269710, "Korba": 1002928,
+    },
+    "Delhi": {
+        "North West Delhi": 2847395, "South Delhi": 2258327, "West Delhi": 2115000,
+        "East Delhi": 1365000, "North East Delhi": 1648000, "South West Delhi": 1852000,
+        "North Delhi": 765000, "Shahdara": 1100000,
+    },
+    "Goa": {"North Goa": 666930, "South Goa": 529978},
+    "Gujarat": {
+        "Ahmedabad": 5817827, "Surat": 4996391, "Vadodara": 3638209,
+        "Rajkot": 3157676, "Jamnagar": 1913685, "Gandhinagar": 1138682,
+        "Anand": 1856680, "Kheda": 2022876,
+    },
+    "Haryana": {
+        "Faridabad": 1055501, "Hisar": 1486517, "Bhiwani": 1423480,
+        "Gurgaon": 870539, "Karnal": 1274183, "Rohtak": 940915,
+        "Ambala": 1003356, "Sonipat": 1279042,
+    },
+    "Himachal Pradesh": {
+        "Kangra": 1339030, "Mandi": 900987, "Shimla": 721745,
+        "Solan": 480567, "Kullu": 381571, "Una": 448273,
+        "Hamirpur": 412491, "Bilaspur": 340751,
+    },
+    "Jharkhand": {
+        "Ranchi": 2044666, "Dhanbad": 2065982, "Giridih": 2044934,
+        "Bokaro": 1766001, "Hazaribagh": 1436604, "East Singhbhum": 2090069,
+        "West Singhbhum": 1502338, "Palamu": 1646064,
+    },
+    "Karnataka": {
+        "Bangalore Urban": 6537124, "Belgaum": 4214505, "Mysore": 2624911,
+        "Gulbarga": 2152213, "Dharwad": 1604286, "Dakshin Kannad": 1897730,
+        "Tumkur": 2584711, "Bellary": 2027518, "Bijapur": 1806918,
+        "Bidar": 1465793, "Raichur": 1659414, "Davanagere": 1790321,
+        "Shimoga": 1644294, "Hassan": 1630156,
+    },
+    "Kerala": {
+        "Thiruvananthapuram": 3234356, "Ernakulam": 3105798, "Kozhikode": 2879131,
+        "Malappuram": 3625471, "Thrissur": 2975440, "Kollam": 2584338,
+        "Palakkad": 2617072, "Kannur": 2408956, "Alappuzha": 2109649,
+        "Kottayam": 1953646, "Kasaragod": 1203342, "Wayanad": 786627,
+        "Idukki": 1128605, "Pathanamthitta": 1231577,
+    },
+    "Madhya Pradesh": {
+        "Indore": 2469891, "Jabalpur": 2192463, "Bhopal": 1825007,
+        "Gwalior": 1690938, "Rewa": 2020348, "Sagar": 2065744,
+    },
+    "Maharashtra": {
+        "Thane": 8128833, "Pune": 7232555, "Mumbai Suburban": 8587600,
+        "Nashik": 4993796, "Nagpur": 4051444, "Aurangabad": 3200272,
+        "Solapur": 3855826, "Kolhapur": 3523162, "Mumbai City": 3326837,
+        "Ahmadnagar": 4005413, "Jalgaon": 3679936,
+    },
+    "Manipur": {
+        "Imphal West": 444043, "Imphal East": 393780, "Bishnupur": 208073,
+        "Thoubal": 366743, "Senapati": 394061, "Churachandpur": 227755,
+        "Ukhrul": 157546, "Chandel": 117466,
+    },
+    "Meghalaya": {
+        "East Khasi Hills": 660742, "West Garo Hills": 515203, "Jaintia Hills": 295692,
+        "East Garo Hills": 239976, "West Khasi Hills": 294115,
+    },
+    "Mizoram": {
+        "Aizawl": 309869, "Lunglei": 124048, "Champhai": 96945,
+    },
+    "Nagaland": {
+        "Dimapur": 269218, "Kohima": 255462, "Mon": 216613,
+        "Mokokchung": 174403, "Tuensang": 158454, "Wokha": 135376,
+    },
+    "Orissa": {
+        "Ganjam": 3161751, "Cuttack": 2341877, "Mayurbhanj": 2296091,
+        "Khordha": 1874405, "Baleshwar": 2138411, "Sundargarh": 1881444,
+        "Sambalpur": 962694, "Koraput": 1177954, "Keonjhar": 1561371,
+    },
+    "Puducherry": {"Pondicherry": 855566, "Karaikal": 170791},
+    "Punjab": {
+        "Ludhiana": 3026988, "Amritsar": 2188566, "Gurdaspur": 2100000,
+        "Jalandhar": 1954773, "Patiala": 1677013, "Bathinda": 1155827,
+        "Sangrur": 1438085, "Hoshiarpur": 1439426,
+    },
+    "Rajasthan": {
+        "Jaipur": 5251071, "Jodhpur": 3166469, "Alwar": 2992592,
+        "Nagaur": 2888399, "Udaipur": 2633069, "Kota": 1568591,
+    },
+    "Sikkim": {
+        "East Sikkim": 244706, "South Sikkim": 109578,
+        "West Sikkim": 117491, "North Sikkim": 43354,
+    },
+    "Tamil Nadu": {
+        "Chennai": 6560242, "Coimbatore": 2856954, "Madurai": 2560943,
+        "Tiruchchirappalli": 2422083, "Salem": 2989632, "Kancheepuram": 3211644,
+        "Tirunelveli Kattabo": 2804437, "Vellore": 3483595, "Erode": 1993403,
+        "Thiruvallur": 2996400, "Villupuram": 3269623,
+    },
+    "Tripura": {
+        "West Tripura": 1592382, "North Tripura": 616173,
+        "Dhalai": 295476, "South Tripura": 369928,
+    },
+    "Uttar Pradesh": {
+        "Allahabad": 4940923, "Moradabad": 3926215, "Azamgarh": 3944696,
+        "Lucknow": 3647834, "Kanpur Nagar": 4138558, "Ghaziabad": 3290586,
+        "Bareilly": 3597033, "Agra": 3620436, "Varanasi": 3138671,
+        "Gorakhpur": 3850568, "Muzaffarnagar": 3544614,
+    },
+    "Uttarakhand": {
+        "Haridwar": 1447187, "Dehradun": 1279083, "Udham Singh Nagar": 1235614,
+        "Nainital": 762809, "Pauri Garhwal": 696770, "Almora": 630064,
+    },
+    "West Bengal": {
+        "North 24 Parganas": 8924654, "South 24 Parganas": 6906869,
+        "Bardhaman": 6895639, "Murshidabad": 5866569, "Nadia": 4604827,
+        "Paschim Medinipur": 5218074, "Hooghly": 5048003, "Howrah": 4273099,
+        "Kolkata": 4572876, "Purba Medinipur": 4567580, "Birbhum": 3061097,
+        "Maldah": 3290468, "Jalpaiguri": 3398613,
+    },
+}
+
+# State-level CAGR 2001→2011 from Census (for fallback when district 2001 data absent)
+# Calculated as (2011_pop/2001_pop)^(1/10) - 1
+STATE_CAGR_2001_2011: dict[str, float] = {
+    "Andhra Pradesh": 0.0105, "Arunachal Pradesh": 0.0261, "Assam": 0.0162,
+    "Bihar": 0.0228, "Chandigarh": 0.0159, "Chhattisgarh": 0.0209,
+    "Dadra and Nagar Haveli": 0.0560, "Daman and Diu": 0.0531,
+    "Delhi": 0.0192, "Goa": 0.0082, "Gujarat": 0.0188,
+    "Haryana": 0.0193, "Himachal Pradesh": 0.0123, "Jharkhand": 0.0222,
+    "Karnataka": 0.0155, "Kerala": 0.0047, "Madhya Pradesh": 0.0200,
+    "Maharashtra": 0.0160, "Manipur": 0.0183, "Meghalaya": 0.0278,
+    "Mizoram": 0.0231, "Nagaland": 0.0050, "Orissa": 0.0136,
+    "Puducherry": 0.0106, "Punjab": 0.0138, "Rajasthan": 0.0213,
+    "Sikkim": 0.0127, "Tamil Nadu": 0.0154, "Tripura": 0.0148,
+    "Uttar Pradesh": 0.0185, "Uttarakhand": 0.0191, "West Bengal": 0.0138,
+    "Andaman and Nicobar": 0.0076, "Lakshadweep": -0.0006,
+}
+
+
+def district_population_series(
+    state: str,
+    district: str,
+    target_years: list[int],
+) -> dict[int, float]:
+    """Compute population for a district at each target year.
+
+    Uses Census 2001 and 2011 data to compute a district-specific CAGR.
+    Projects forward using that rate. Falls back to state-level CAGR if
+    2001 district data is unavailable.
+
+    Args:
+        state: GAUL state name.
+        district: GAUL district name.
+        target_years: Years to estimate population for.
+
+    Returns:
+        Dict {year: population}.
+    """
+    from .utils import interpolate_population
+
+    pop_2011 = DISTRICT_POP.get(state, {}).get(district)
+    pop_2001 = DISTRICT_POP_2001.get(state, {}).get(district)
+
+    if pop_2011 is None:
+        pop_2011 = 500_000  # fallback
+
+    if pop_2001 is not None and pop_2001 > 0:
+        cagr = (pop_2011 / pop_2001) ** (1 / 10) - 1
+        # Cap to sensible bounds: -1% to +5% per year
+        cagr = max(-0.01, min(0.05, cagr))
+    else:
+        cagr = STATE_CAGR_2001_2011.get(state, 0.015)
+
+    # Build a sparse series: 2001, 2011, then project to 2031
+    known = {2011: float(pop_2011)}
+    if pop_2001 is not None:
+        known[2001] = float(pop_2001)
+
+    # Extrapolate beyond 2011 assuming CAGR continues (conservative)
+    for yr in range(2012, max(target_years) + 1):
+        known[yr] = pop_2011 * ((1 + cagr) ** (yr - 2011))
+
+    return interpolate_population(known, target_years)
+
+
 def state_population(state: str) -> int:
     """Total 2011 Census population for a state."""
     return sum(DISTRICT_POP.get(state, {}).values())

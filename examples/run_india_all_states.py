@@ -37,7 +37,10 @@ from nightlights_econ.plotting import (
     plot_india_heatmap, plot_india_bar_ranking, plot_rankings, plot_city_comparison
 )
 from nightlights_econ.rankings import rank_cities
-from nightlights_econ.india_census import DISTRICT_POP, select_districts, state_population, all_states
+from nightlights_econ.india_census import (
+    DISTRICT_POP, select_districts, state_population, all_states,
+    district_population_series, STATE_CAGR_2001_2011,
+)
 from nightlights_econ.utils import interpolate_population
 
 PROJECT    = "nightlights-analysis"
@@ -151,8 +154,7 @@ for (state, district), raw_df in raw_data.items():
         )
         df = apply_lighting_tech_adjustment(df, lta)
 
-        dist_pop = DISTRICT_POP.get(state, {}).get(district, 500_000)
-        pop = {yr: dist_pop * (1.015 ** (yr - 2011)) for yr in target_years}
+        pop = district_population_series(state, district, target_years)
 
         df = compute_all_metrics(
             df, base_year=BASE_YR,
