@@ -627,3 +627,143 @@ def plot_comparison_report(
         save_path=str(d / f"{names}_comparison_dashboard.png"),
     )
     return figs
+
+
+def plot_india_heatmap(
+    state_annual: dict[str, pd.DataFrame],
+    metric: str = "gdp_per_capita",
+    title: str = "India States: GDP Per-Capita Growth (VIIRS Nighttime Lights)",
+    save_path: Optional[str] = None,
+) -> plt.Figure:
+    """Heatmap of annual per-capita GDP index across all Indian states.
+
+    Args:
+        state_annual: Dict mapping state_name → annual DataFrame with columns
+            'year' and metric (annual mean across selected districts).
+            The metric should be an index where base_year = 100.
+        metric: Column name to plot (default 'gdp_per_capita').
+        title: Chart title.
+        save_path: Optional path to save the figure.
+
+    Returns:
+        matplotlib Figure.
+    """
+    _apply_style()
+
+    # Build wide matrix: rows = states, cols = years
+    all_years = sorted({yr for df in state_annual.values() for yr in df["year"]})
+    states = sorted(state_annual.keys())
+
+    matrix = np.full((len(states), len(all_years)), np.nan)
+    for i, state in enumerate(states):
+        df = state_annual[state]
+        year_to_val = dict(zip(df["year"], df[metric]))
+        for j, yr in enumerate(all_years):
+            matrix[i, j] = year_to_val.get(yr, np.nan)
+
+    # Sort states by 2026 value (or last available year) descending
+    last_col = matrix[:, -1]
+    sort_idx = np.argsort(last_col)[::-1]
+    matrix = matrix[sort_idx]
+    states_sorted = [states[i] for i in sort_idx]
+
+    # Normalise each state to its 2014 (first year) = 100 for fair comparison
+    base_col = matrix[:, 0:1]
+    base_col = np.where(base_col == 0, np.nan, base_col)
+    matrix_norm = matrix / base_col * 100
+
+    fig_h = max(10, len(states_sorted) * 0.45)
+    fig, ax = plt.subplots(figsize=(16, fig_h))
+
+    # Use a perceptually uniform diverging colormap centred at 100
+    vmin = max(50, float(np.nanpercentile(matrix_norm, 5)))
+    vmax = min(600, float(np.nanpercentile(matrix_norm, 95)))
+    cmap = plt.get_cmap("RdYlGn")
+
+    im = ax.imshow(
+        matrix_norm,
+        aspect="auto",
+        cmap=cmap,
+        vmin=vmin,
+        vmax=vmax,
+        interpolation="nearest",
+    )
+
+    # Axes labels
+    ax.set_xticks(range(len(all_years)))
+    ax.set_xticklabels([str(y) for y in all_years], fontsize=9, rotation=45, ha="right")
+    ax.set_yticks(range(len(states_sorted)))
+    ax.set_yticklabels(states_sorted, fontsize=9)
+
+    # Annotate cells with the index value
+    for i in range(len(states_sorted)):
+        for j in range(len(all_years)):
+            val = matrix_norm[i, j]
+            if not np.isnan(val):
+                txt_color = "white" if (val < vmin + (vmax - vmin) * 0.25 or
+                                        val > vmin + (vmax - vmin) * 0.75) else "black"
+                ax.text(j, i, f"{val:.0f}", ha="center", va="center",
+                        fontsize=7, color=txt_color, fontweight="bold")
+
+    cbar = fig.colorbar(im, ax=ax, shrink=0.6, pad=0.02)
+    cbar.set_label("Per-Capita GDP Index (2014 = 100)", fontsize=10)
+
+    ax.set_title(title, fontsize=14, fontweight="bold", pad=15)
+    ax.set_xlabel("Year", fontsize=11)
+    _add_source(ax)
+
+    fig.tight_layout()
+    safe_save(fig, save_path, dpi=150)
+    return fig
+
+
+def plot_india_bar_ranking(
+    state_metrics: dict[str, float],
+    title: str = "India States: Per-Capita GDP Growth 2014–2026",
+    save_path: Optional[str] = None,
+) -> plt.Figure:
+    """Horizontal bar chart ranking all Indian states by a single metric.
+
+    Args:
+        state_metrics: Dict mapping state_name → metric value (e.g. % growth).
+        title: Chart title.
+        save_path: Optional save path.
+
+    Returns:
+        matplotlib Figure.
+    """
+    _apply_style()
+
+    items = sorted(state_metrics.items(), key=lambda x: x[1])
+    states = [i[0] for i in items]
+    values = [i[1] for i in items]
+    median_val = float(np.nanmedian(values))
+
+    colors = [
+        PALETTE[3] if v > median_val * 1.15 else
+        PALETTE[1] if v < median_val * 0.85 else
+        PALETTE[2]
+        for v in values
+    ]
+
+    fig_h = max(8, len(states) * 0.38)
+    fig, ax = plt.subplots(figsize=(14, fig_h))
+    bars = ax.barh(states, values, color=colors, height=0.7)
+    ax.axvline(median_val, color=SPINE_COLOR, linewidth=1.2, linestyle="--",
+               label=f"Median ({median_val:.1f}%)")
+
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_width() + 2, bar.get_y() + bar.get_height() / 2,
+                f"{val:+.0f}%", va="center", fontsize=8, color=ANNOTATION_COLOR)
+
+    green_patch = mpatches.Patch(color=PALETTE[3], label="Above median")
+    amber_patch = mpatches.Patch(color=PALETTE[2], label="Near median")
+    red_patch   = mpatches.Patch(color=PALETTE[1], label="Below median")
+    ax.legend(handles=[green_patch, amber_patch, red_patch], fontsize=9, loc="lower right")
+
+    ax.set_xlabel("Per-Capita GDP Growth % (2014 → 2026)", fontsize=11)
+    ax.set_title(title, fontsize=14, fontweight="bold", pad=15)
+    _add_source(ax)
+    fig.tight_layout()
+    safe_save(fig, save_path, dpi=150)
+    return fig
