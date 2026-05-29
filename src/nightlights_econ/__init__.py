@@ -13,9 +13,25 @@ from .lighting_tech import (
     get_led_penetration,
     lta_correction_summary,
 )
+from .cache import (
+    geometry_key,
+    get_cached,
+    save_to_cache,
+    cache_info,
+    invalidate,
+    invalidate_all,
+)
+from .extractor import (
+    extract_viirs_cached,
+    extract_for_district,
+    extract_for_point,
+)
 
 __version__ = "0.1.0"
 __all__ = [
+    "geometry_key", "get_cached", "save_to_cache", "cache_info",
+    "invalidate", "invalidate_all",
+    "extract_viirs_cached", "extract_for_district", "extract_for_point",
     "CityDefinition",
     "RadianceSeries",
     "NighttimeLightsEngine",
