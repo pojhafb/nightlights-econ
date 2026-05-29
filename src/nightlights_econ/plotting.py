@@ -342,13 +342,19 @@ def plot_raw_radiance(
         fontsize=14, fontweight="bold", pad=15,
     )
 
-    # Cloud-free obs bar chart
-    ax_bot.bar(df["date"], df["cf_obs"], width=25, color=PALETTE[0], alpha=0.7,
-               label="Cloud-free obs")
-    ax_bot.axhline(8, color=PALETTE[1], linewidth=1.0, linestyle="--", alpha=0.8,
-                   label="Correction threshold (8)")
+    # Cloud-free obs bar chart (only when data is available — not for DMSP annual)
+    cf_series = pd.to_numeric(df["cf_obs"], errors="coerce")
+    if cf_series.notna().any():
+        ax_bot.bar(df["date"], cf_series.fillna(0), width=25, color=PALETTE[0], alpha=0.7,
+                   label="Cloud-free obs")
+        ax_bot.axhline(8, color=PALETTE[1], linewidth=1.0, linestyle="--", alpha=0.8,
+                       label="Correction threshold (8)")
+        ax_bot.legend(fontsize=8)
+    else:
+        ax_bot.text(0.5, 0.5, "Cloud-free obs not available\n(DMSP-OLS annual composite)",
+                    ha="center", va="center", transform=ax_bot.transAxes,
+                    fontsize=9, color=ANNOTATION_COLOR)
     ax_bot.set_ylabel("CF obs/month", fontsize=9)
-    ax_bot.legend(fontsize=8)
 
     ax_bot.xaxis.set_major_formatter(mdates.DateFormatter("%Y"))
     ax_bot.xaxis.set_major_locator(mdates.YearLocator(2))
@@ -377,7 +383,7 @@ def plot_city_comparison(
     _apply_style()
     from .analysis import total_growth_pct
 
-    colors = PALETTE[:len(series_list)]
+    colors = [PALETTE[i % len(PALETTE)] for i in range(len(series_list))]
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
     ax_rad, ax_pc = axes[0]
     ax_rad_rank, ax_pc_rank = axes[1]
@@ -527,7 +533,7 @@ def plot_shock_resilience(
         matplotlib Figure.
     """
     _apply_style()
-    colors = PALETTE[:len(shock_results)]
+    colors = [PALETTE[i % len(PALETTE)] for i in range(len(shock_results))]
 
     fig, ax = plt.subplots(figsize=(13, 7))
 
