@@ -12,6 +12,7 @@ from .cloud_correction import correct_cloud_bias
 from .gdp_proxy import compute_all_metrics
 from .population import get_population_series
 from .ppp import fetch_ppp_factors
+from .lighting_tech import LightingTechConfig, apply_lighting_tech_adjustment
 from .utils import (
     VIIRS_COLLECTION,
     RADIANCE_BAND,
@@ -31,6 +32,10 @@ class NighttimeLightsEngine:
         credentials_file: Optional path to service account JSON key.
         scale: GEE pixel scale in meters for reduce operations (default 500).
         elasticity: Henderson elasticity for GDP proxy (default 0.88).
+        lighting_tech_config: Optional LightingTechConfig. If provided, the LED
+            spectral shift, electrification jump, and efficiency corrections are
+            applied after cloud correction. Strongly recommended for Indian cities
+            and any post-2015 analysis.
     """
 
     def __init__(
@@ -40,12 +45,14 @@ class NighttimeLightsEngine:
         credentials_file: Optional[str] = None,
         scale: int = 500,
         elasticity: float = HENDERSON_ELASTICITY,
+        lighting_tech_config: Optional[LightingTechConfig] = None,
     ) -> None:
         self.project_id = project_id
         self.service_account = service_account
         self.credentials_file = credentials_file
         self.scale = scale
         self.elasticity = elasticity
+        self.lighting_tech_config = lighting_tech_config
         self._ee = None
 
     def _init_ee(self) -> None:
@@ -249,6 +256,17 @@ class NighttimeLightsEngine:
         df = self._extract_viirs_monthly(geometry, start_year, end_year)
         df = correct_cloud_bias(df, cf_threshold=cf_threshold)
 
+        # Apply Lighting Technology Adjustment if configured
+        lta_config = self.lighting_tech_config
+        radiance_for_gdp = "radiance_corrected"
+        if lta_config is not None:
+            # Propagate city's state if config doesn't specify one
+            if lta_config.state is None and city.admin1 is not None:
+                from dataclasses import replace as dc_replace
+                lta_config = dc_replace(lta_config, state=city.admin1.lower())
+            df = apply_lighting_tech_adjustment(df, lta_config)
+            radiance_for_gdp = "radiance_lta"
+
         target_years = list(range(start_year, end_year + 1))
         population_by_year = get_population_series(
             city, target_years=target_years, geometry=geometry
@@ -261,6 +279,7 @@ class NighttimeLightsEngine:
             population_by_year=population_by_year,
             ppp_factors=ppp_factors,
             elasticity=self.elasticity,
+            radiance_col=radiance_for_gdp,
         )
 
         metadata = {
@@ -271,6 +290,7 @@ class NighttimeLightsEngine:
             "cf_threshold": cf_threshold,
             "collection": VIIRS_COLLECTION,
             "country_code": city.country_code,
+            "lta_applied": lta_config is not None,
         }
 
         return RadianceSeries(

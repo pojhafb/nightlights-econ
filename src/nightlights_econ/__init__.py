@@ -7,6 +7,12 @@ from .gdp_proxy import compute_gdp_proxy, compute_gdp_per_capita, compute_ppp_ad
 from .analysis import shock_analysis, growth_decomposition, compare_cities, total_growth_pct
 from .ppp import fetch_ppp_factors
 from .population import get_population_series
+from .lighting_tech import (
+    LightingTechConfig,
+    apply_lighting_tech_adjustment,
+    get_led_penetration,
+    lta_correction_summary,
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -25,4 +31,8 @@ __all__ = [
     "total_growth_pct",
     "fetch_ppp_factors",
     "get_population_series",
+    "LightingTechConfig",
+    "apply_lighting_tech_adjustment",
+    "get_led_penetration",
+    "lta_correction_summary",
 ]
